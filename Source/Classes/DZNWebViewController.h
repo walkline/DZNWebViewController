@@ -111,6 +111,8 @@ typedef NS_OPTIONS(NSUInteger, DZNsupportedWebActions) {
 // The action button displayed on the navigation bar (requieres at least 1 DZNsupportedWebActions value)
 @property (nonatomic, strong) UIImage *actionButtonImage;
 
+@property (nonatomic, strong) UIBarButtonItem *backwardBarItem;
+@property (nonatomic, strong) UIBarButtonItem *forwardBarItem;
 
 ///------------------------------------------------
 /// @name Delegate Methods Requiring Super

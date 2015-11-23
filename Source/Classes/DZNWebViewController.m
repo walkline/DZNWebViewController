@@ -18,8 +18,6 @@ static char DZNWebViewControllerKVOContext = 0;
 
 @interface DZNWebViewController ()
 
-@property (nonatomic, strong) UIBarButtonItem *backwardBarItem;
-@property (nonatomic, strong) UIBarButtonItem *forwardBarItem;
 @property (nonatomic, strong) UIBarButtonItem *stateBarItem;
 @property (nonatomic, strong) UIBarButtonItem *actionBarItem;
 @property (nonatomic, strong) UIProgressView *progressView;
