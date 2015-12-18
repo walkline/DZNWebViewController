@@ -526,9 +526,16 @@ static char DZNWebViewControllerKVOContext = 0;
     self.navigationController.hidesBarsWhenVerticallyCompact = self.hideBarsWithGestures;
 
     if (self.hideBarsWithGestures) {
-        [self.navigationBar addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
-        [self.navigationBar addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
-        [self.navigationBar addObserver:self forKeyPath:@"alpha" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+       @try {
+            [self.navigationBar removeObserver:self forKeyPath:@"hidden" context:&DZNWebViewControllerKVOContext];
+            [self.navigationBar removeObserver:self forKeyPath:@"center" context:&DZNWebViewControllerKVOContext];
+            [self.navigationBar removeObserver:self forKeyPath:@"alpha" context:&DZNWebViewControllerKVOContext];
+        }
+        @catch (NSException *exception) {
+            [self.navigationBar addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+            [self.navigationBar addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+            [self.navigationBar addObserver:self forKeyPath:@"alpha" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+        }
     }
 
     if (!DZN_IS_IPAD && self.navigationController.toolbarHidden && self.toolbarItems.count > 0) {
