@@ -31,6 +31,8 @@ static char DZNWebViewControllerKVOContext = 0;
 
 @property (nonatomic) BOOL completedInitialLoad;
 
+@property (nonatomic, assign) BOOL isNavigationBarSubscribed;
+
 @end
 
 @implementation DZNWebViewController
@@ -84,6 +86,8 @@ static char DZNWebViewControllerKVOContext = 0;
     
     [self.webView addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
     self.completedInitialLoad = NO;
+    
+    self.isNavigationBarSubscribed = NO;
 }
 
 
@@ -131,14 +135,14 @@ static char DZNWebViewControllerKVOContext = 0;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	[super viewWillDisappear:animated];
+    [super viewWillDisappear:animated];
     
     [self clearProgressViewAnimated:animated];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-	[super viewDidDisappear:animated];
+    [super viewDidDisappear:animated];
     
     [self.webView stopLoading];
 }
@@ -526,16 +530,7 @@ static char DZNWebViewControllerKVOContext = 0;
     self.navigationController.hidesBarsWhenVerticallyCompact = self.hideBarsWithGestures;
 
     if (self.hideBarsWithGestures) {
-       @try {
-            [self.navigationBar removeObserver:self forKeyPath:@"hidden" context:&DZNWebViewControllerKVOContext];
-            [self.navigationBar removeObserver:self forKeyPath:@"center" context:&DZNWebViewControllerKVOContext];
-            [self.navigationBar removeObserver:self forKeyPath:@"alpha" context:&DZNWebViewControllerKVOContext];
-        }
-        @catch (NSException *exception) {
-            [self.navigationBar addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
-            [self.navigationBar addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
-            [self.navigationBar addObserver:self forKeyPath:@"alpha" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
-        }
+        [self subscribeNavigationBar];
     }
 
     if (!DZN_IS_IPAD && self.navigationController.toolbarHidden && self.toolbarItems.count > 0) {
@@ -861,10 +856,9 @@ static char DZNWebViewControllerKVOContext = 0;
 - (void)dealloc
 {
     if (self.hideBarsWithGestures) {
-        [self.navigationBar removeObserver:self forKeyPath:@"hidden" context:&DZNWebViewControllerKVOContext];
-        [self.navigationBar removeObserver:self forKeyPath:@"center" context:&DZNWebViewControllerKVOContext];
-        [self.navigationBar removeObserver:self forKeyPath:@"alpha" context:&DZNWebViewControllerKVOContext];
+        [self unSubscribeNavigationBar];
     }
+    
     [self.webView removeObserver:self forKeyPath:@"loading" context:&DZNWebViewControllerKVOContext];
     
     _backwardBarItem = nil;
@@ -882,6 +876,26 @@ static char DZNWebViewControllerKVOContext = 0;
     _webView.scrollView.delegate = nil;
     _webView = nil;
     _URL = nil;
+}
+
+- (void)subscribeNavigationBar {
+    if (!self.isNavigationBarSubscribed) {
+        [self.navigationBar addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+        [self.navigationBar addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+        [self.navigationBar addObserver:self forKeyPath:@"alpha" options:NSKeyValueObservingOptionNew context:&DZNWebViewControllerKVOContext];
+        
+        self.isNavigationBarSubscribed = YES;
+    }
+}
+
+- (void)unSubscribeNavigationBar {
+    if (self.isNavigationBarSubscribed) {
+        [self.navigationBar removeObserver:self forKeyPath:@"hidden" context:&DZNWebViewControllerKVOContext];
+        [self.navigationBar removeObserver:self forKeyPath:@"center" context:&DZNWebViewControllerKVOContext];
+        [self.navigationBar removeObserver:self forKeyPath:@"alpha" context:&DZNWebViewControllerKVOContext];
+        
+        self.isNavigationBarSubscribed = NO;
+    }
 }
 
 @end
