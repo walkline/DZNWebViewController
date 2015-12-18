@@ -121,6 +121,8 @@ static char DZNWebViewControllerKVOContext = 0;
     if (!self.webView.URL) {
         [self loadURL:self.URL];
     }
+    
+    [self subscribeNavigationBar];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -145,6 +147,7 @@ static char DZNWebViewControllerKVOContext = 0;
     [super viewDidDisappear:animated];
     
     [self.webView stopLoading];
+    [self unSubscribeNavigationBar];
 }
 
 
