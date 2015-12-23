@@ -529,7 +529,7 @@ static char DZNWebViewControllerKVOContext = 0;
     self.navigationBarSuperView = self.navigationBar.superview;
     
     self.navigationController.hidesBarsOnSwipe = self.hideBarsWithGestures;
-    self.navigationController.hidesBarsWhenKeyboardAppears = self.hideBarsWithGestures;
+    self.navigationController.hidesBarsWhenKeyboardAppears = NO;
     self.navigationController.hidesBarsWhenVerticallyCompact = self.hideBarsWithGestures;
 
     if (self.hideBarsWithGestures) {
